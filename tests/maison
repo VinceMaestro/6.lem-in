@@ -1,0 +1,15 @@
+5
+##start
+Start 0 0
+Julien 1 1
+Toudou 2 2
+Sinead 3 3
+Marie 4 4
+##end
+End 5 5
+Start-Julien
+Julien-Toudou
+Marie-End
+Toudou-Sinead
+Sinead--Marie
+Julien--Marie

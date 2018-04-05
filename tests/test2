@@ -1,0 +1,25 @@
+3
+##start
+Pawlette(1) 23 3
+Maurice(2) 16 7
+#commentaire
+Peter(3) 16 3
+Sarah(4) 16 5
+Mina(5) 9 3
+Hotto(6) 1 5
+Doggu(7) 4 8
+##end
+Ulrich(0) 9 5
+Ulrich(0)-Sarah(4)
+Ulrich(0)-Hotto(6)
+Pawlette(1)-Peter(3)
+Sarah(4)-Peter(3)
+Mina(5)-Maurice(2)
+Peter(3)-Mina(5)
+#autre commentaire
+Sarah(4)-Maurice(2)
+Maurice(2)-Pawlette(1)
+Hotto(6)-Doggu(7)
+Doggu(7)-Maurice(2)
+Doggu(7)-Sarah(4)
+Hotto(6)-Mina(5)

@@ -22,16 +22,18 @@
 # define MEMORY_SIZE					1000000
 # define MAX_LINK						100000
 # define MAX_LINK_NODE					100000
-# define SUPERPOSITION_ERROR_MESSAGE	("Error : different rooms \
-	should not be at the exact same coordinates : ")
-
-# define BAD_START_END_MESSAGE			("Error : both start and end "\
-	"rooms must exist and be differeeeeeeeeeeeent.\n")
-
+# define SUERR_PART1					"Error : different rooms "
+# define SUERR_PART2					"should not be at the"
+# define SUERR_PART3					" exact same coordinates : "
+# define SUPERPOSITION_ERROR_MESSAGE	(SUERR_PART1 SUERR_PART2 SUERR_PART3)
+# define BAD_SE_PART1					"Error : both start and end "
+# define BAD_SE_PART2					"rooms must exist and be different.\n"
+# define BAD_START_END_MESSAGE			(BAD_SE_PART1 BAD_SE_PART2)
 # define UNDEFINED_ROOM_MESSAGE			("Error : Undefined room\n")
 # define SYNTAX_ERROR					("Error : Syntax error\n")
-# define DISC_START_END_ERROR_MESSAGE	("Error : Start room and End room "\
-	"must be connected together.\n")
+# define DISC_SEE_PART1					"Error : Start room and End room "
+# define DISC_SEE_PART2					"must be connected together.\n"
+# define DISC_START_END_ERROR_MESSAGE	(DISC_SEE_PART1 DISC_SEE_PART2)
 
 typedef enum							e_nt
 {

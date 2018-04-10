@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lem-in.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:11:13 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:11:14 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem-in.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -27,7 +39,7 @@ int										ft_strcmp(
 	return (*str_a == *str_b);
 }
 
-void									create_link_nodes()
+void									create_link_nodes(void)
 {
 	t_link_node							*link_node;
 	t_room								*room;
@@ -57,6 +69,7 @@ void									preprocess(
 	t_lemin *lemin)
 {
 	int									i;
+	t_link_node							*tmp;
 
 	create_link_nodes();
 	i = 0;
@@ -68,7 +81,6 @@ void									preprocess(
 	i = 0;
 	while (i < g_link_index)
 		++i;
-	t_link_node					*tmp;
 	tmp = lemin->start->first_link;
 	while (tmp)
 		tmp = tmp->next;
@@ -89,7 +101,7 @@ int										main(void)
 		*g_string_ptr++ = *input++;
 		if (parse(&lemin, input))
 			parse(&lemin, input);
-		if ('\n' == *(input -1))
+		if ('\n' == *(input - 1))
 		{
 			write(1, g_buffer, input - g_buffer);
 			input = g_buffer;
@@ -99,7 +111,6 @@ int										main(void)
 	parse(&lemin, input);
 	validate(&lemin);
 	preprocess(&lemin);
-	write(1, "\n", 1);
 	resolve(&lemin);
 	return (0);
 }

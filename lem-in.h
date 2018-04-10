@@ -1,3 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lem-in.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:31:19 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:31:23 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef LEM_IN_H
+# define LEM_IN_H
+
 # define CHAR_DIGIT						'0'
 # define CHAR_ALPHA						'a'
 # define CHAR_ALPHA_NO_L				'b'
@@ -7,14 +22,16 @@
 # define MEMORY_SIZE					1000000
 # define MAX_LINK						100000
 # define MAX_LINK_NODE					100000
-# define SUPERPOSITION_ERROR_MESSAGE	("Error : different rooms "\
-	"should not be at the exact same coordinates : ")
+# define SUPERPOSITION_ERROR_MESSAGE	("Error : different rooms \
+	should not be at the exact same coordinates : ")
+
 # define BAD_START_END_MESSAGE			("Error : both start and end "\
 	"rooms must exist and be differeeeeeeeeeeeent.\n")
+
 # define UNDEFINED_ROOM_MESSAGE			("Error : Undefined room\n")
 # define SYNTAX_ERROR					("Error : Syntax error\n")
-# define DISC_START_END_ERROR_MESSAGE	("Error : Start room and End room"\
-	"must be connected together. ")
+# define DISC_START_END_ERROR_MESSAGE	("Error : Start room and End room "\
+	"must be connected together.\n")
 
 typedef enum							e_nt
 {
@@ -129,3 +146,5 @@ int										parse(
 
 void									resolve(
 	t_lemin *lemin);
+
+#endif

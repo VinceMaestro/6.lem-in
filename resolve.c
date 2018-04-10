@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   resolve.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:10:48 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:10:50 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem-in.h"
 #include <unistd.h>
 
@@ -78,6 +90,7 @@ void									resolve(
 	int									something_moved;
 
 	ant_id = 0;
+	write(1, "\n", 1);
 	while (ant_id < lemin->antnbr)
 		g_ant[ant_id++].room = lemin->start;
 	something_moved = 1;

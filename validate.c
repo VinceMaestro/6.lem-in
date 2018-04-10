@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:10:58 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:10:59 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem-in.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -27,7 +39,7 @@ static inline void					superposition_error(
 	exit(1);
 }
 
-static inline void					check_room_superposition()
+static inline void					check_room_superposition(void)
 {
 	int								i;
 	t_room							*room;
@@ -38,7 +50,7 @@ static inline void					check_room_superposition()
 		while (i < g_room_index - 1)
 		{
 			room = g_room + i + 1;
-			while(room != g_room + g_room_index)
+			while (room != g_room + g_room_index)
 			{
 				if (ft_strcmp(room->x, g_room[i].x) &&
 					ft_strcmp(room->y, g_room[i].y))
@@ -78,10 +90,10 @@ static inline int					check_start_end_connection(
 static inline void					error_exit(
 	const char *const restrict error_code,
 	const size_t size)
-	{
-		write(2, error_code, size);
-		exit(1);
-	}
+{
+	write(2, error_code, size);
+	exit(1);
+}
 
 void								validate(
 	t_lemin *lemin)

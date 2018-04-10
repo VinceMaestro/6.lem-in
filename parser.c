@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:11:27 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:11:33 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem-in.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -123,7 +135,7 @@ t_state								g_transitions_stack[255][S_END][NT_END] =
 	[CHAR_DIGIT][S_INITIAL][NT_LINK] = S_NAME,
 };
 
-int									forbidden_combination[NT_END][NT_END] =
+int									g_forbidden_combination[NT_END][NT_END] =
 {
 	[NT_DEFLINK][NT_DEFROOM] = 1,
 	[NT_NBR][NT_LINEFEED] = 1,
@@ -189,7 +201,7 @@ static inline void					combine(
 		combine_loop(lemin->stack_ptr - 2, lemin->stack_ptr - 1))
 		--lemin->stack_ptr;
 	if (lemin->stack != (lemin->stack_ptr - 1) &&
-		forbidden_combination[(lemin->stack_ptr - 2)->nt]
+		g_forbidden_combination[(lemin->stack_ptr - 2)->nt]
 			[(lemin->stack_ptr - 1)->nt])
 		exit(write(2, SYNTAX_ERROR, sizeof(SYNTAX_ERROR)));
 }
@@ -228,7 +240,6 @@ int									parse(
 	const char *const restrict input)
 {
 	t_state							new_state;
-	t_nt							new_nt;
 	int								pushed_something;
 	char							c;
 

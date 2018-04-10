@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   combination.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vpetit <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 15:10:33 by vpetit            #+#    #+#             */
+/*   Updated: 2018/04/10 15:10:34 by vpetit           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem-in.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,39 +19,6 @@ extern t_ant						g_ant[];
 extern t_room						g_room[];
 extern int							g_room_index;
 extern int							g_link_index;
-
-// char									*nt_string[NT_END] = {
-// 	[NT_BEGIN] = "NT_BEGIN",
-// 	[NT_ANTNBR] = "NT_ANTNBR",
-// 	[NT_DASH] = "NT_DASH",
-// 	[NT_LINK] = "NT_LINK",
-// 	[NT_COMMAND] = "NT_COMMAND",
-// 	[NT_COMMAND_BEGIN] = "NT_COMMAND_BEGIN",
-// 	[NT_DEFLINK_INCOMPLETE] = "NT_DEFLINK_INCOMPLETE",
-// 	[NT_DEFROOM_INCOMPLETE] = "NT_DEFROOM_INCOMPLETE",
-// 	[NT_ANTNBR_INCOMPLETE] = "NT_ANTNBR_INCOMPLETE",
-// 	[NT_COMMAND_INCOMPLETE] = "NT_COMMAND_INCOMPLETE",
-// 	[NT_DEFLINK] = "NT_DEFLINK",
-// 	[NT_DEFROOM] = "NT_DEFROOM",
-// 	[NT_LINEFEED] = "NT_LINEFEED",
-// 	[NT_ROOM] = "NT_ROOM",
-// 	[NT_NAME] = "NT_NAME",
-// 	[NT_NBR] = "NT_NBR",
-// };
-
-// char									*state_string[S_END] = {
-// 	[S_INITIAL] = "S_INITIAL",
-// 	[S_LINE] = "S_LINE",
-// 	[S_BLANK] = "S_BLANK",
-// 	[S_NAME] = "S_NAME",
-// 	[S_NBR] = "S_NBR",
-// 	[S_DASH] = "S_DASH",
-// 	[S_LINEFEED] = "S_LINEFEED",
-// 	[S_NAME_DASH] = "S_NAME_DASH",
-// 	[S_SHARP] = "S_SHARP",
-// 	[S_COMMENT] = "S_COMMENT",
-// 	[S_COMMAND] = "S_COMMAND",
-// };
 
 t_room								*get_room_by_name(
 	const char *const restrict name)

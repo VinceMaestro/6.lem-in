@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lem-in.h"
+#include "lem_in.h"
 #include <unistd.h>
 
 static t_ant							g_ant[MAX_ANT];

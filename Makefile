@@ -4,7 +4,7 @@ CC = gcc
 
 LIBS =
 
-SRC = lem_in.c validate.c combination.c parser.c resolve.c
+SRC = lem_in.c validate.c combination.c parser.c resolve.c error_exit.c
 
 FLAG = -Weverything -Wall -Werror -Wextra
 

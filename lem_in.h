@@ -34,6 +34,9 @@
 # define DISC_SEE_PART1					"Error : Start room and End room "
 # define DISC_SEE_PART2					"must be connected together.\n"
 # define DISC_START_END_ERROR_MESSAGE	(DISC_SEE_PART1 DISC_SEE_PART2)
+# define TOO_MANY_A_PART1				"Error : number of ants exceed MAX_ANT "
+# define TOO_MANY_A_PART2				"or INT_MAX.\n"
+# define TOO_MANY_ANTS_ERROR_MESSAGE	(TOO_MANY_A_PART1 TOO_MANY_A_PART2)
 
 typedef enum							e_nt
 {
@@ -148,5 +151,9 @@ int										parse(
 
 void									resolve(
 	t_lemin *lemin);
+
+void									error_exit(
+	const char *const restrict error_code,
+	const unsigned long long size);
 
 #endif

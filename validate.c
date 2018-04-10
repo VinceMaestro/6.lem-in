@@ -87,14 +87,6 @@ static inline int					check_start_end_connection(
 	return (lemin->end->connected);
 }
 
-static inline void					error_exit(
-	const char *const restrict error_code,
-	const size_t size)
-{
-	write(2, error_code, size);
-	exit(1);
-}
-
 void								validate(
 	t_lemin *lemin)
 {

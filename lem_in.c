@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 char									g_buffer[10000];
 
@@ -75,6 +76,9 @@ void									preprocess(
 	i = 0;
 	while (lemin->antnbr_string[i])
 		lemin->antnbr = lemin->antnbr * 10 + lemin->antnbr_string[i++] - '0';
+	if (lemin->antnbr > INT_MAX || lemin->antnbr > MAX_ANT)
+		error_exit(TOO_MANY_ANTS_ERROR_MESSAGE,
+			sizeof(TOO_MANY_ANTS_ERROR_MESSAGE));
 	i = 0;
 	while (i < g_room_index)
 		++i;

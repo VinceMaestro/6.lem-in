@@ -13,15 +13,20 @@
 #ifndef LEM_IN_H
 # define LEM_IN_H
 
+# include <stdint.h>
+
 # define CHAR_DIGIT						'0'
 # define CHAR_ALPHA						'a'
 # define CHAR_ALPHA_NO_L				'b'
 # define CHAR_BLANK						' '
-# define MAX_ANT						100000
-# define MAX_ROOM						10000
+# define FIRST_ANT_ID					1
+# define MAX_ANT						1000000
+# define MAX_ROOM						1000000
 # define MEMORY_SIZE					1000000
-# define MAX_LINK						100000
-# define MAX_LINK_NODE					100000
+# define MAX_LINK						1000000
+# define MAX_LINK_NODE					(MAX_LINK * 2)
+# define MAX_LINE_SIZE					10000
+# define PARSER_STACK_SIZE				1000000
 # define SUERR_PART1					"Error : different rooms "
 # define SUERR_PART2					"should not be at the"
 # define SUERR_PART3					" exact same coordinates : "
@@ -34,9 +39,10 @@
 # define DISC_SEE_PART1					"Error : Start room and End room "
 # define DISC_SEE_PART2					"must be connected together.\n"
 # define DISC_START_END_ERROR_MESSAGE	(DISC_SEE_PART1 DISC_SEE_PART2)
-# define TOO_MANY_A_PART1				"Error : number of ants exceed MAX_ANT "
-# define TOO_MANY_A_PART2				"or INT_MAX.\n"
-# define TOO_MANY_ANTS_ERROR_MESSAGE	(TOO_MANY_A_PART1 TOO_MANY_A_PART2)
+# define TOO_MANY_ANTS_ERROR_MESSAGE	"Error : too many ants.\n"
+# define TOO_MANY_ROOMS_ERROR_MESSAGE	"Error : Too many rooms.\n"
+# define TOO_MANY_LINKS_ERROR_MESSAGE	"Error : Too many links.\n"
+# define LONG_LINE_ERROR				"Error : A line is too long.\n"
 
 typedef enum							e_nt
 {
@@ -81,10 +87,11 @@ typedef struct							s_room
 	char								*x;
 	char								*y;
 	struct s_link_node					*first_link;
+	struct s_ant						*ant;
 	int									connected;
 	int									negative;
 	int									positive;
-	struct s_ant						*ant;
+	uint32_t							padding;
 }										t_room;
 
 typedef struct							s_ant
@@ -106,28 +113,30 @@ typedef struct							s_link_node
 
 typedef struct							s_capture
 {
-	t_nt								nt;
 	void								*data;
+	t_nt								nt;
+	uint32_t							padding;
 }										t_capture;
 
 typedef struct							s_lemin
 {
+	t_room								*start;
+	t_room								*end;
+	char								*antnbr_string;
+	t_state								cur_state;
+	uint32_t							padding;
+	unsigned long long					antnbr;
 	union
 	{
 		char							value;
+		unsigned long long				padding;
 		struct
 		{
 			char						start:1;
 			char						end:1;
+			char						fu_norminette:6;
 		}								f;
 	}									flags;
-	t_state								cur_state;
-	t_capture							stack[10000];
-	t_capture							*stack_ptr;
-	t_room								*start;
-	t_room								*end;
-	unsigned long long					antnbr;
-	char								*antnbr_string;
 }										t_lemin;
 
 typedef void							(*t_combine_func)(
@@ -152,8 +161,12 @@ int										parse(
 void									resolve(
 	t_lemin *lemin);
 
-void									error_exit(
-	const char *const restrict error_code,
-	const unsigned long long size);
+extern t_link							g_link[];
+extern t_room							g_room[];
+extern int								g_room_index;
+extern int								g_link_index;
+extern t_capture						g_stack[];
+extern t_capture						*g_stack_ptr;
+extern char								*g_string_ptr;
 
 #endif

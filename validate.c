@@ -14,17 +14,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-extern t_link						g_link[];
-extern t_ant						g_ant[];
-extern t_room						g_room[];
-extern int							g_room_index;
-extern int							g_link_index;
-
-static inline void					superposition_error(
+static inline int					superposition_error(
 	const char *const restrict name_a,
 	const char *const restrict name_b)
 {
-	int								e;
+	size_t							e;
 
 	write(2, SUPERPOSITION_ERROR_MESSAGE, sizeof(SUPERPOSITION_ERROR_MESSAGE));
 	e = 0;
@@ -36,7 +30,7 @@ static inline void					superposition_error(
 	while (name_b[e])
 		++e;
 	write(2, name_b, e);
-	exit(1);
+	return (1);
 }
 
 static inline void					check_room_superposition(void)
@@ -54,7 +48,7 @@ static inline void					check_room_superposition(void)
 			{
 				if (ft_strcmp(room->x, g_room[i].x) &&
 					ft_strcmp(room->y, g_room[i].y))
-					superposition_error(room->name, g_room[i].name);
+					exit(superposition_error(room->name, g_room[i].name));
 				++room;
 			}
 			++i;
@@ -90,13 +84,12 @@ static inline int					check_start_end_connection(
 void								validate(
 	t_lemin *lemin)
 {
-	int								i;
-
 	if (!lemin->start || !lemin->end || lemin->start == lemin->end)
-		error_exit(BAD_START_END_MESSAGE, sizeof(BAD_START_END_MESSAGE));
+		exit((int)write(2, BAD_START_END_MESSAGE,
+			sizeof(BAD_START_END_MESSAGE)));
 	check_room_superposition();
 	lemin->start->connected = 1;
 	if (!g_link_index || !check_start_end_connection(lemin))
-		error_exit(DISC_START_END_ERROR_MESSAGE,
-			sizeof(DISC_START_END_ERROR_MESSAGE));
+		exit((int)write(2, DISC_START_END_ERROR_MESSAGE,
+			sizeof(DISC_START_END_ERROR_MESSAGE)));
 }

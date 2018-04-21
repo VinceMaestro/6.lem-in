@@ -16,15 +16,15 @@
 #include <stdio.h>
 #include <limits.h>
 
-char									g_buffer[10000];
-
-t_link_node								g_link_node[MAX_LINK_NODE];
+static char								g_line_buffer[MAX_LINE_SIZE];
+static t_link_node						g_link_node[MAX_LINK_NODE];
+static int								g_link_node_index;
 t_link									g_link[MAX_LINK];
-t_ant									g_ant[MAX_ANT];
 t_room									g_room[MAX_ROOM];
 int										g_room_index;
 int										g_link_index;
-int										g_link_node_index;
+t_capture								g_stack[PARSER_STACK_SIZE];
+t_capture								*g_stack_ptr;
 
 extern char								*g_string_ptr;
 
@@ -40,7 +40,7 @@ int										ft_strcmp(
 	return (*str_a == *str_b);
 }
 
-void									create_link_nodes(void)
+static inline void						create_link_nodes(void)
 {
 	t_link_node							*link_node;
 	t_room								*room;
@@ -66,7 +66,7 @@ void									create_link_nodes(void)
 	}
 }
 
-void									preprocess(
+static inline void						preprocess(
 	t_lemin *lemin)
 {
 	int									i;
@@ -75,10 +75,11 @@ void									preprocess(
 	create_link_nodes();
 	i = 0;
 	while (lemin->antnbr_string[i])
-		lemin->antnbr = lemin->antnbr * 10 + lemin->antnbr_string[i++] - '0';
-	if (lemin->antnbr > INT_MAX || lemin->antnbr > MAX_ANT)
-		error_exit(TOO_MANY_ANTS_ERROR_MESSAGE,
-			sizeof(TOO_MANY_ANTS_ERROR_MESSAGE));
+		lemin->antnbr = lemin->antnbr * 10 +
+			(unsigned long long)(lemin->antnbr_string[i++] - '0');
+	if (lemin->antnbr > MAX_ANT)
+		exit((int)write(2, TOO_MANY_ANTS_ERROR_MESSAGE,
+			sizeof(TOO_MANY_ANTS_ERROR_MESSAGE)));
 	i = 0;
 	while (i < g_room_index)
 		++i;
@@ -95,20 +96,20 @@ int										main(void)
 	t_lemin								lemin;
 	char								*input;
 
-	lemin.stack[0].nt = NT_BEGIN;
-	lemin.stack[0].data = 0;
-	lemin.stack_ptr = lemin.stack + 1;
-	input = g_buffer;
+	g_stack[0].nt = NT_BEGIN;
+	g_stack_ptr = g_stack + 1;
+	input = g_line_buffer;
 	lemin.cur_state = S_INITIAL;
 	while (0 < read(0, input, 1))
 	{
+		if (MAX_LINE_SIZE < (input - g_line_buffer))
+			exit((int)write(2, LONG_LINE_ERROR, sizeof(LONG_LINE_ERROR)));
 		*g_string_ptr++ = *input++;
-		if (parse(&lemin, input))
-			parse(&lemin, input);
+		parse(&lemin, input) && parse(&lemin, input);
 		if ('\n' == *(input - 1))
 		{
-			write(1, g_buffer, input - g_buffer);
-			input = g_buffer;
+			write(1, g_line_buffer, (size_t)(input - g_line_buffer));
+			input = g_line_buffer;
 		}
 	}
 	*input = 0;

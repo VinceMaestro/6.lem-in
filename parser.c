@@ -83,12 +83,12 @@ static char							g_character_class[255] = {
 	['Z'] = CHAR_ALPHA,
 };
 
-int									g_is_data[NT_END] = {
+static int							g_is_data[NT_END] = {
 	[NT_NBR] = 1,
 	[NT_NAME] = 1,
 };
 
-t_nt								g_nt_to_keep[S_END] = {
+static t_nt							g_nt_to_keep[S_END] = {
 	[S_NBR] = NT_NBR,
 	[S_NAME] = NT_NAME,
 	[S_DASH] = NT_DASH,
@@ -96,12 +96,12 @@ t_nt								g_nt_to_keep[S_END] = {
 	[S_COMMAND] = NT_COMMAND_BEGIN,
 };
 
-t_state								g_defaults[S_END] = {
+static t_state						g_defaults[S_END] = {
 	[S_SHARP] = S_COMMENT,
 	[S_COMMENT] = S_COMMENT,
 };
 
-t_state								g_transitions[255][S_END] = {
+static t_state						g_transitions[255][S_END] = {
 	[CHAR_DIGIT][S_NBR] = S_NBR,
 	['L'][S_NAME] = S_NAME,
 	[CHAR_ALPHA][S_NAME] = S_NAME,
@@ -113,7 +113,7 @@ t_state								g_transitions[255][S_END] = {
 	[0][S_INITIAL] = S_INITIAL,
 };
 
-t_state								g_transitions_stack[255][S_END][NT_END] =
+static t_state						g_transitions_stack[255][S_END][NT_END] =
 {
 	[CHAR_DIGIT][S_INITIAL][NT_NAME] = S_NBR,
 	['-'][S_INITIAL][NT_NAME] = S_DASH,
@@ -135,7 +135,7 @@ t_state								g_transitions_stack[255][S_END][NT_END] =
 	[CHAR_DIGIT][S_INITIAL][NT_LINK] = S_NAME,
 };
 
-int									g_forbidden_combination[NT_END][NT_END] =
+static int							g_forbidden_combination[NT_END][NT_END] =
 {
 	[NT_DEFLINK][NT_DEFROOM] = 1,
 	[NT_NBR][NT_LINEFEED] = 1,
@@ -149,14 +149,14 @@ int									g_forbidden_combination[NT_END][NT_END] =
 	[NT_DEFROOM][NT_LINEFEED] = 1,
 };
 
-char								*g_commands[] = {
+static char							*g_commands[] = {
 	"start",
 	"end",
 	0,
 };
 
-char								g_string[MEMORY_SIZE];
-char								*g_string_origin = g_string;
+static char							g_string[MEMORY_SIZE];
+static char							*g_string_origin = g_string;
 char								*g_string_ptr = g_string;
 
 static inline int					get_command_by_name(
@@ -194,16 +194,15 @@ static inline char					*get_string(int use)
 	return (res);
 }
 
-static inline void					combine(
-	t_lemin *const restrict lemin)
+static inline void					combine(void)
 {
-	while (lemin->stack != (lemin->stack_ptr - 1) &&
-		combine_loop(lemin->stack_ptr - 2, lemin->stack_ptr - 1))
-		--lemin->stack_ptr;
-	if (lemin->stack != (lemin->stack_ptr - 1) &&
-		g_forbidden_combination[(lemin->stack_ptr - 2)->nt]
-			[(lemin->stack_ptr - 1)->nt])
-		exit(write(2, SYNTAX_ERROR, sizeof(SYNTAX_ERROR)));
+	while (g_stack != (g_stack_ptr - 1) &&
+		combine_loop(g_stack_ptr - 2, g_stack_ptr - 1))
+		--g_stack_ptr;
+	if (g_stack != (g_stack_ptr - 1) &&
+		g_forbidden_combination[(g_stack_ptr - 2)->nt]
+			[(g_stack_ptr - 1)->nt])
+		exit((int)write(2, SYNTAX_ERROR, sizeof(SYNTAX_ERROR)));
 }
 
 static inline void					push_non_terminal(
@@ -211,27 +210,27 @@ static inline void					push_non_terminal(
 {
 	int								command;
 
-	lemin->stack_ptr->nt = g_nt_to_keep[lemin->cur_state];
-	(lemin->stack_ptr++)->data =
+	g_stack_ptr->nt = g_nt_to_keep[lemin->cur_state];
+	(g_stack_ptr++)->data =
 		get_string(g_is_data[g_nt_to_keep[lemin->cur_state]]);
-	combine(lemin);
-	if (NT_DEFROOM == (lemin->stack_ptr - 1)->nt && lemin->flags.f.start)
+	combine();
+	if (NT_DEFROOM == (g_stack_ptr - 1)->nt && lemin->flags.f.start)
 	{
-		lemin->start = (lemin->stack_ptr - 1)->data;
+		lemin->start = (g_stack_ptr - 1)->data;
 		lemin->flags.f.start = 0;
 	}
-	if (NT_DEFROOM == (lemin->stack_ptr - 1)->nt && lemin->flags.f.end)
+	if (NT_DEFROOM == (g_stack_ptr - 1)->nt && lemin->flags.f.end)
 	{
-		lemin->end = (lemin->stack_ptr - 1)->data;
+		lemin->end = (g_stack_ptr - 1)->data;
 		lemin->flags.f.end = 0;
 	}
-	if (NT_ANTNBR == (lemin->stack_ptr - 1)->nt)
-		lemin->antnbr_string = (lemin->stack_ptr - 1)->data;
-	if (NT_COMMAND == (lemin->stack_ptr - 1)->nt)
+	if (NT_ANTNBR == (g_stack_ptr - 1)->nt)
+		lemin->antnbr_string = (g_stack_ptr - 1)->data;
+	if (NT_COMMAND == (g_stack_ptr - 1)->nt)
 	{
-		if (-1 != (command = get_command_by_name((lemin->stack_ptr - 1)->data)))
+		if (-1 != (command = get_command_by_name((g_stack_ptr - 1)->data)))
 			lemin->flags.value |= 1 << command;
-		--lemin->stack_ptr;
+		--g_stack_ptr;
 	}
 }
 
@@ -244,12 +243,12 @@ int									parse(
 	char							c;
 
 	pushed_something = 0;
-	c = g_character_class[*(input - 1)] ?
-		g_character_class[*(input - 1)] : *(input - 1);
-	new_state = g_transitions_stack[c]
-		[lemin->cur_state][(lemin->stack_ptr - 1)->nt];
+	c = g_character_class[(int)*(input - 1)] ?
+		g_character_class[(int)*(input - 1)] : *(input - 1);
+	new_state = g_transitions_stack[(int)c]
+		[lemin->cur_state][(g_stack_ptr - 1)->nt];
 	if (!new_state)
-		new_state = g_transitions[c][lemin->cur_state];
+		new_state = g_transitions[(int)c][lemin->cur_state];
 	if (!new_state)
 		new_state = g_defaults[lemin->cur_state];
 	if (S_INITIAL != lemin->cur_state && !new_state)
@@ -259,7 +258,7 @@ int									parse(
 		new_state = S_INITIAL;
 	}
 	else if (!new_state)
-		exit(write(2, SYNTAX_ERROR, sizeof(SYNTAX_ERROR)));
+		exit((int)write(2, SYNTAX_ERROR, sizeof(SYNTAX_ERROR)));
 	else if (S_INITIAL == lemin->cur_state)
 		get_string(0);
 	lemin->cur_state = new_state;

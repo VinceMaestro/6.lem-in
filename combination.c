@@ -14,13 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-extern t_link						g_link[];
-extern t_ant						g_ant[];
-extern t_room						g_room[];
-extern int							g_room_index;
-extern int							g_link_index;
-
-t_room								*get_room_by_name(
+static inline t_room				*get_room_by_name(
 	const char *const restrict name)
 {
 	int								i;
@@ -35,12 +29,15 @@ t_room								*get_room_by_name(
 	return (0);
 }
 
-void								combine_name_nbr(
+static inline void					combine_name_nbr(
 	t_capture *const restrict first_capture,
 	t_capture *const restrict second_capture)
 {
 	t_room							*room;
 
+	if (g_room_index == MAX_ROOM)
+		exit((int)write(2, TOO_MANY_ROOMS_ERROR_MESSAGE,
+			sizeof(TOO_MANY_ROOMS_ERROR_MESSAGE)));
 	room = get_room_by_name(first_capture->data);
 	room = room ? room : g_room + g_room_index++;
 	room->name = first_capture->data;
@@ -49,7 +46,7 @@ void								combine_name_nbr(
 	first_capture->nt = NT_ROOM;
 }
 
-void								combine_room_nbr(
+static inline void					combine_room_nbr(
 	t_capture *const restrict first_capture,
 	t_capture *const restrict second_capture)
 {
@@ -57,12 +54,15 @@ void								combine_room_nbr(
 	first_capture->nt = NT_DEFROOM_INCOMPLETE;
 }
 
-void								combine_link_name(
+static inline void					combine_link_name(
 	t_capture *const restrict first_capture,
 	t_capture *const restrict second_capture)
 {
 	t_link							*link;
 
+	if (g_link_index == MAX_LINK)
+		exit((int)write(2, TOO_MANY_LINKS_ERROR_MESSAGE,
+			sizeof(TOO_MANY_LINKS_ERROR_MESSAGE)));
 	link = g_link + g_link_index++;
 	link->a = get_room_by_name(first_capture->data);
 	link->b = get_room_by_name(second_capture->data);
@@ -75,7 +75,14 @@ void								combine_link_name(
 	first_capture->nt = NT_DEFLINK_INCOMPLETE;
 }
 
-t_nt									g_nt_combination[NT_END][NT_END] = {
+static t_combine_func				g_nt_combination_func[NT_END][NT_END] =
+{
+	[NT_NAME][NT_NBR] = combine_name_nbr,
+	[NT_ROOM][NT_NBR] = combine_room_nbr,
+	[NT_LINK][NT_NAME] = combine_link_name,
+};
+
+static t_nt							g_nt_combination[NT_END][NT_END] = {
 	[NT_BEGIN][NT_NAME] = NT_NAME,
 	[NT_BEGIN][NT_NBR] = NT_ANTNBR_INCOMPLETE,
 	[NT_COMMAND_BEGIN][NT_NAME] = NT_COMMAND_INCOMPLETE,
@@ -84,13 +91,6 @@ t_nt									g_nt_combination[NT_END][NT_END] = {
 	[NT_ANTNBR_INCOMPLETE][NT_LINEFEED] = NT_ANTNBR,
 	[NT_COMMAND_INCOMPLETE][NT_LINEFEED] = NT_COMMAND,
 	[NT_NAME][NT_DASH] = NT_LINK,
-};
-
-t_combine_func						g_nt_combination_func[NT_END][NT_END] =
-{
-	[NT_NAME][NT_NBR] = combine_name_nbr,
-	[NT_ROOM][NT_NBR] = combine_room_nbr,
-	[NT_LINK][NT_NAME] = combine_link_name,
 };
 
 int									combine_loop(

@@ -16,10 +16,10 @@
 static t_ant							g_ant[MAX_ANT];
 
 static inline void						print_ant_movement(
-	int ant_id,
+	unsigned long long ant_id,
 	const char *const restrict room_name)
 {
-	int									e;
+	size_t								e;
 	char								nbr[30];
 
 	write(1, "L", 1);
@@ -38,7 +38,7 @@ static inline void						print_ant_movement(
 
 static inline int						move_ant(
 	t_ant *const restrict ant,
-	const int ant_id,
+	const unsigned long long ant_id,
 	t_room *const restrict best_room,
 	t_room *const restrict end_room)
 {
@@ -55,7 +55,7 @@ static inline int						move_ant(
 
 static inline void						try_moving_ant(
 	t_ant *const restrict ant,
-	const int ant_id,
+	const unsigned long long ant_id,
 	int *const restrict something_moved,
 	t_room *const restrict end_room
 )
@@ -67,6 +67,7 @@ static inline void						try_moving_ant(
 
 	link_node = ant->room->first_link;
 	best_room = 0;
+	best_score = 0;
 	while (link_node)
 	{
 		score = link_node->target->positive ?
@@ -85,24 +86,24 @@ static inline void						try_moving_ant(
 void									resolve(
 	t_lemin *lemin)
 {
-	int									ant_id;
+	unsigned long long					ant_id;
 	t_ant								*ant;
 	int									something_moved;
 
-	ant_id = 0;
+	ant_id = FIRST_ANT_ID;
 	write(1, "\n", 1);
-	while (ant_id < lemin->antnbr)
-		g_ant[ant_id++].room = lemin->start;
+	while (ant_id < FIRST_ANT_ID + lemin->antnbr)
+		g_ant[ant_id++ - FIRST_ANT_ID].room = lemin->start;
 	something_moved = 1;
 	lemin->start->negative = 0;
 	lemin->end->positive = 999999999;
 	while (something_moved)
 	{
 		something_moved = 0;
-		ant_id = 0;
-		while (ant_id < lemin->antnbr)
+		ant_id = FIRST_ANT_ID;
+		while (ant_id < FIRST_ANT_ID + lemin->antnbr)
 		{
-			ant = g_ant + ant_id;
+			ant = g_ant + ant_id - FIRST_ANT_ID;
 			if (lemin->end != ant->room)
 				try_moving_ant(ant, ant_id, &something_moved, lemin->end);
 			++ant_id;

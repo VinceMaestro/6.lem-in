@@ -4,9 +4,9 @@ CC = gcc
 
 LIBS =
 
-SRC = lem_in.c validate.c combination.c parser.c resolve.c error_exit.c
+SRC = lem_in.c validate.c combination.c parser.c resolve.c
 
-FLAG = -Weverything -Wall -Werror -Wextra
+FLAGS = -Weverything -Wall -Werror -Wextra
 
 OBJ = $(SRC:.c=.o)
 
